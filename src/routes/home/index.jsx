@@ -16,7 +16,12 @@ const Home = (props) => {
   };
 
   const getData = () => {
-    const url = 'https://api.coindesk.com/v1/bpi/historical/close.json';
+    const today = new Date();
+    const endDate = moment(today).format('YYYY-MM-DD');
+    today.setMonth(today.getMonth() - 6);
+    const startDate = moment(today).format('YYYY-MM-DD');
+
+    const url = `https://api.coindesk.com/v1/bpi/historical/close.json?start=${startDate}&end=${endDate}`;
 
     fetch(url)
       .then((r) => r.json())
@@ -50,7 +55,7 @@ const Home = (props) => {
   return (
     <div className='container'>
       <div className='row'>
-        <h1>30 Day Bitcoin Price Chart</h1>
+        <h1>6 Month Bitcoin Price Chart</h1>
       </div>
       <div className='row'>
         {data ? <InfoBox data={data} /> : null}
