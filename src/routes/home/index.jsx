@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
+import Chart from '../../components/Chart';
+import InfoBox from '../../components/InfoBox';
+import ToolTip from '../../components/ToolTip';
+import './home.scss';
 
 const Home = (props) => {
-  const [fetchingData, setFetchingData] = useState(false);
   const [data, setData] = useState(null);
   const [hoverLoc, setHoverLoc] = useState(null);
   const [activePoint, setActivePoint] = useState(null);
@@ -18,7 +21,7 @@ const Home = (props) => {
     fetch(url)
       .then((r) => r.json())
       .then((bitcoinData) => {
-          console.log('bitCoinData', bitcoinData)
+        console.log('bitCoinData', bitcoinData);
         const sortedData = [];
         let count = 0;
         for (let date in bitcoinData.bpi) {
@@ -34,7 +37,6 @@ const Home = (props) => {
           count++;
         }
         setData(sortedData);
-        setFetchingData(false);
       })
       .catch((e) => {
         console.log(e);
@@ -42,10 +44,45 @@ const Home = (props) => {
   };
 
   useEffect(() => {
-    //   getData();
+      getData();
   }, []);
 
-  return <div>Home</div>;
+  return (
+    <div className='container'>
+      <div className='row'>
+        <h1>30 Day Bitcoin Price Chart</h1>
+      </div>
+      <div className='row'>
+        {data ? <InfoBox data={data} /> : null}
+      </div>
+      <div className='row'>
+        <div className='popup'>
+          {hoverLoc ? (
+            <ToolTip
+              hoverLoc={hoverLoc}
+              activePoint={activePoint}
+            />
+          ) : null}
+        </div>
+      </div>
+      <div className='row'>
+        <div className='chart'>
+          {data ? (
+            <Chart
+              data={data}
+              onChartHover={(a, b) => handleChartHover(a, b)}
+            />
+          ) : null}
+        </div>
+      </div>
+      <div className='row'>
+        <div id='coindesk'>
+          {' '}
+          Powered by <a href='http://www.coindesk.com/price/'>CoinDesk</a>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Home;
